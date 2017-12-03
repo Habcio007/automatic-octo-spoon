@@ -1,4 +1,3 @@
-#pragma once
 #ifndef STRUCTS_H
 #define STRUCTS_H
 #define _CRTDBG_MAP_ALLOC 
