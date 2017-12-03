@@ -1,4 +1,3 @@
-#pragma once
 #include "structs.h"
 //#ifndef MENU_FUNCTIONS_H
 //#define MENU_FUNCTIONS_H
