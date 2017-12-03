@@ -3,7 +3,6 @@
 #include<time.h>
 #include"functions.h"
 #include"structs.h"
-#include"filters_data.h"
 #include"filters_functions.h"
 #include"menu_functions.h"
 
