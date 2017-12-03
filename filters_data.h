@@ -1,4 +1,3 @@
-#pragma once
 int AVERAGE_SIZE = 3;
 int AVERAGE[9] = { 1, 1, 1,
 1, 1, 1,
