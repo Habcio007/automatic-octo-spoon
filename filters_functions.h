@@ -1,4 +1,3 @@
-#pragma once
 #include"structs.h"
 #ifndef FILTERS_FUNCTIONS_H
 #define FILTERS_FUNCTIONS_H
