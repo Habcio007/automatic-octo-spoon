@@ -3,8 +3,8 @@
 #include"structs.h"
 #include"filters_data.h"
 #include"filters_functions.h"
-#include"filters_functions.c"
 
+Filters *matrix_filter;
 
 Filters *averagre_filter() {
 	Filters *filter;

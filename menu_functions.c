@@ -11,7 +11,6 @@ void save_m() {
 	save(photo[memmory.last_photo_number]);
 	system("out.pgm");
 }
-
 void low_pass_filter_menu()
 {
 	printf("Menu:\n");
@@ -146,26 +145,38 @@ void filter_menu() {
 	case 2:
 		filter_matrix = squere_filter();
 		photo[memmory.last_photo_number] = filter(photo[memmory.last_photo_number], filter_matrix);
+		filter_matrix = clean_f(filter_matrix);
+		free(filter_matrix);
 		break;
 	case 3:
 		filter_matrix = circle_filter();
 		photo[memmory.last_photo_number] = filter(photo[memmory.last_photo_number], filter_matrix);
+		filter_matrix = clean_f(filter_matrix);
+		free(filter_matrix);
 		break;
 	case 4:
 		filter_matrix = low_pass_filter_lp();
 		photo[memmory.last_photo_number] = filter(photo[memmory.last_photo_number], filter_matrix);
+		filter_matrix = clean_f(filter_matrix);
+		free(filter_matrix);
 		break;
 	case 5:
 		filter_matrix = piramidal_filter();
 		photo[memmory.last_photo_number] = filter(photo[memmory.last_photo_number], filter_matrix);
+		filter_matrix = clean_f(filter_matrix);
+		free(filter_matrix);
 		break;
 	case 6:
 		filter_matrix = conus_filter();
 		photo[memmory.last_photo_number] = filter(photo[memmory.last_photo_number], filter_matrix);
+		filter_matrix = clean_f(filter_matrix);
+		free(filter_matrix);
 		break;
 	case 7:
 		filter_matrix = low_pass_filter_gauss();
 		photo[memmory.last_photo_number] = filter(photo[memmory.last_photo_number], filter_matrix);
+		filter_matrix = clean_f(filter_matrix);
+		free(filter_matrix);
 		break;
 	case 8:
 		break;
@@ -219,7 +230,7 @@ void noise_m()
 Filters *low_pass_filter_lp() {
 	Filters *filter;
 	int menu_2;
-	 filter = (Filters*)malloc(sizeof(Filters), _NORMAL_BLOCK, "out.txt", __LINE__);
+	 filter = (Filters*)malloc(sizeof(Filters));
 	system("cls");
 	low_pass_filter_menu_lp();
 	scanf("%d", &menu_2);
@@ -246,7 +257,7 @@ Filters *low_pass_filter_lp() {
 Filters *low_pass_filter_gauss() {
 	Filters *filter;
 	int menu_2;
-	 filter = (Filters*)malloc(sizeof(Filters), _NORMAL_BLOCK, "out.txt", __LINE__);
+	 filter = (Filters*)malloc(sizeof(Filters));
 	system("cls");
 	low_pass_filter_menu_gauss();
 	scanf("%d", &menu_2);
@@ -276,6 +287,44 @@ Filters *low_pass_filter_gauss() {
 		break;
 	}
 }
+Filters *low_pass_filter() {
+	Filters *filter;
+	filter = (Filters*)malloc(sizeof(Filters));
+	low_pass_filter_menu();
+	int menu_1, menu_2 = 0;
+	system("cls");
+	low_pass_filter_menu();
+	scanf("%d", &menu_1);
+	switch (menu_1) {
+	case 1:
+		filter = averagre_filter();
+		break;
+	case 2:
+		filter = squere_filter();
+		break;
+	case 3:
+		filter = circle_filter();
+		break;
+	case 4:
+		filter = low_pass_filter_lp();
+		break;
+	case 5:
+		filter = piramidal_filter();
+		break;
+	case 6:
+		filter = conus_filter();
+		break;
+	case 7:
+		filter = low_pass_filter_gauss();
+		break;
+	case 8:
+		break;
+	default:
+		break;
+	}
+	return filter;
+}
+//ready
 						
 
 

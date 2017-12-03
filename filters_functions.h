@@ -1,6 +1,6 @@
-#include"structs.h"
 #ifndef FILTERS_FUNCTIONS_H
 #define FILTERS_FUNCTIONS_H
+
 Filters *averagre_filter();
 Filters *squere_filter();
 Filters *circle_filter();
@@ -15,4 +15,4 @@ Filters *gauss3_filter();
 Filters *gauss4_filter();
 Filters *gauss5_filter();
 Filters *clean_f(Filters *filter);
-#endif // !filters_functions.h
+#endif // !FILTERS_FUNCTIONS_H

@@ -1,6 +1,5 @@
+	#pragma once
 #ifndef STRUCTS_H
-#define STRUCTS_H
-#define _CRTDBG_MAP_ALLOC 
 #include <stdlib.h> 
 #include <crtdbg.h>  
 
@@ -22,5 +21,8 @@ typedef struct Memmory {
 	int last_photo_number;
 }Memmory;
 
+
+Picture **photo;
+Memmory memmory;
 #endif // !1
 

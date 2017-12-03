@@ -1,9 +1,7 @@
-#include "structs.h"
-//#ifndef MENU_FUNCTIONS_H
-//#define MENU_FUNCTIONS_H
+#ifndef MENU_FUNCTIONS_H
+#define MENU_FUNCTIONS_H
 
 int menu_1;
-
 void low_pass_filter_menu();
 void low_pass_filter_menu_lp();
 void low_pass_filter_menu_gauss();
@@ -18,5 +16,8 @@ void noise_m();
 
 Filters *low_pass_filter_lp();
 Filters *low_pass_filter_gauss();
-//#endif // !menu_fuctions.h
+
+#endif // !MENU_FUNCTIONS_H
+
+
 

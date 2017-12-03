@@ -3,17 +3,9 @@
 #include<time.h>
 #include<math.h>
 #include"structs.h"
-#include"filters_functions.h"
-#include"filters_data.h"
 
-
-
+#ifndef FUNCTIONS_H
 #define FUNCTIONS_H
-Picture **photo;
-Filters *matrix_filter;
-Memmory memmory;
-
-
 void add();
 void end();
 void save(Picture *pgm_save);
@@ -21,6 +13,7 @@ void histogram_chart(Picture *pgm);
 int median(int, int, int, int);
 void swap(int*, int*);
 void increas_sort(int *);
+
 
 Filters *low_pass_filter();
 Picture *scale(Picture *pgm_in, int scal);
@@ -40,3 +33,4 @@ Picture *zoom(Picture *pgm_in);
 Picture *clear(Picture *pgm_in);
 Picture *LUT(Picture *pgm_in);
 
+#endif // !FUNCTIONS_H

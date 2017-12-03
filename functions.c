@@ -1,13 +1,10 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
 #include<math.h>
 #include"structs.h"
-#include"filters_functions.h"
-#include"filters_data.h"
-#include"menu_functions.h"
-#include"filters_functions.c"
-#include"menu_functions.c"
+#include"functions.h"
 
 void add() {
 	char adres[100];
@@ -45,6 +42,10 @@ void end() {
 	}
 	for (i = 0; i < memmory.max_mem_size; i++) {
 		free(photo[i]);
+	}
+	if (photo == NULL) {
+		printf("jestes dupa");
+		system("pause");
 	}
 	free(photo);
 }
@@ -155,45 +156,6 @@ void increas_sort(int *tab)
 			}
 		}
 	}
-}
-//ready
-
-Filters *low_pass_filter() {
-	Filters *filter;
-	filter = (Filters*)malloc(sizeof(Filters));
-	low_pass_filter_menu();
-	int menu_1, menu_2 = 0;
-		system("cls");
-		low_pass_filter_menu();
-		scanf("%d", &menu_1);
-		switch (menu_1) {
-		case 1:
-			filter = averagre_filter();
-			break;
-		case 2:
-			filter = squere_filter();
-			break;
-		case 3:
-			filter = circle_filter();
-			break;
-		case 4:
-			filter = low_pass_filter_lp();
-			break;
-		case 5:
-			filter = piramidal_filter();
-			break;
-		case 6:
-			filter = conus_filter();
-			break;
-		case 7:
-			filter = low_pass_filter_gauss();
-			break;
-		case 8:
-			break;
-		default:
-			break;
-		}
-	return filter;
 }
 //ready
 Picture *scale(Picture *pgm_in, int scal) {
@@ -661,8 +623,11 @@ Picture *clear(Picture *pgm_in) {
 	for (i = 0; i<2; i++) {
 		free(pgm_in->histogram[i]);
 	}
-	free(pgm_in->LUT);
+	
 	free(pgm_in->histogram);
+	if (pgm_in->LUT != NULL){
+	free(pgm_in->LUT);
+	}
 	return pgm_in;
 }
 //ready
@@ -680,8 +645,8 @@ Picture *LUT(Picture *pgm_in) {
 	for (i = 0; i < pgm_out->y; i++) {
 		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
 	}
-
-	for (i = 1; i <= pgm_out->skala; i++) {
+	pgm_out->pixel = pgm_in->pixel;
+	for (i = 0; i <= pgm_out->skala; i++) {
 		pgm_out->LUT[i] = i;
 	}
 	return pgm_out;

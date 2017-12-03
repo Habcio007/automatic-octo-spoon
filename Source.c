@@ -1,13 +1,10 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
 #include"structs.h"
 #include"functions.h"
-#include"functions.c"
-#include"filters_functions.h"
-#include"filters_functions.c"
 #include"menu_functions.h"
-#include"menu_functions.c"
 
 int main()
 {
