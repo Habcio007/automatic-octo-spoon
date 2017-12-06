@@ -524,6 +524,91 @@ Filters *gauss5_filter() {
 	return filter;
 }
 
+Filters *hp1_filter() {
+	Filters *filter;
+	int  i, j, k = 0;
+	filter = (Filters*)malloc(sizeof(Filters));
+	filter->average = 0;
+	filter->size = HP1_SIZE;
+	filter->type = (int**)calloc(filter->size, sizeof(int*));
+	for (i = 0; i < filter->size; i++) {
+		filter->type[i] = (int*)calloc(filter->size, sizeof(int));
+	}
+
+	for (i = 0; i < filter->size; i++) {
+		for (j = 0; j < filter->size; j++) {
+			filter->type[i][j] = HP1[k];
+			filter->average = HP1[k] + filter->average;
+			k++;
+		}
+	}
+	return filter;
+}
+
+Filters *hp2_filter() {
+	Filters *filter;
+	int  i, j, k = 0;
+	filter = (Filters*)malloc(sizeof(Filters));
+	filter->average = 0;
+	filter->size = HP2_SIZE;
+	filter->type = (int**)calloc(filter->size, sizeof(int*));
+	for (i = 0; i < filter->size; i++) {
+		filter->type[i] = (int*)calloc(filter->size, sizeof(int));
+	}
+
+	for (i = 0; i < filter->size; i++) {
+		for (j = 0; j < filter->size; j++) {
+			filter->type[i][j] = HP2[k];
+			filter->average = HP2[k] + filter->average;
+			k++;
+		}
+	}
+	return filter;
+}
+
+Filters *hp3_filter() {
+	Filters *filter;
+	int  i, j, k = 0;
+	filter = (Filters*)malloc(sizeof(Filters));
+	filter->average = 0;
+	filter->size = HP3_SIZE;
+	filter->type = (int**)calloc(filter->size, sizeof(int*));
+	for (i = 0; i < filter->size; i++) {
+		filter->type[i] = (int*)calloc(filter->size, sizeof(int));
+	}
+
+	for (i = 0; i < filter->size; i++) {
+		for (j = 0; j < filter->size; j++) {
+			filter->type[i][j] = HP3[k];
+			filter->average = HP3[k] + filter->average;
+			k++;
+		}
+	}
+	return filter;
+}
+
+Filters *us_filter() {
+	Filters *filter;
+	int  i, j, k = 0;
+	filter = (Filters*)malloc(sizeof(Filters));
+	filter->average = 0;
+	filter->size = USUN_SREDNIA_SIZE;
+	filter->type = (int**)calloc(filter->size, sizeof(int*));
+	for (i = 0; i < filter->size; i++) {
+		filter->type[i] = (int*)calloc(filter->size, sizeof(int));
+	}
+
+	for (i = 0; i < filter->size; i++) {
+		for (j = 0; j < filter->size; j++) {
+			filter->type[i][j] = USUN_SREDNIA[k];
+			filter->average = USUN_SREDNIA[k] + filter->average;
+			k++;
+		}
+	}
+	return filter;
+}
+
+
 Filters *clean_f(Filters *filter) {
 	int i;
 	for (i = 0; i < filter->size; i++) {

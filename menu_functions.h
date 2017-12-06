@@ -16,6 +16,7 @@ void noise_m();
 
 Filters *low_pass_filter_lp();
 Filters *low_pass_filter_gauss();
+Filters *high_pass_filter_menu_m();
 
 #endif // !MENU_FUNCTIONS_H
 

@@ -14,5 +14,9 @@ Filters *gauss2_filter();
 Filters *gauss3_filter();
 Filters *gauss4_filter();
 Filters *gauss5_filter();
+Filters *us_filter();
+Filters *hp1_filter();
+Filters *hp2_filter();
+Filters *hp3_filter();
 Filters *clean_f(Filters *filter);
 #endif // !FILTERS_FUNCTIONS_H

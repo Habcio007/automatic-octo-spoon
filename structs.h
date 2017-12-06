@@ -5,8 +5,6 @@
 typedef struct Picture {
 	int x, y, skala;
 	int **pixel;
-	int **histogram;
-	int *LUT;
 } Picture;
 
 typedef struct Filters {
@@ -22,5 +20,6 @@ typedef struct Memmory {
 
 Picture **photo;
 Memmory memmory;
+int data_input_test;
 #endif // !1
 

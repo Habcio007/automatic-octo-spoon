@@ -23,14 +23,13 @@ Picture *miror_y(Picture *pgm_in);
 Picture *miror_x(Picture *pgm_in);
 Picture *rotate(Picture *pgm_in);
 Picture *rotate_180(Picture *pgm_in);
-Picture *histogram(Picture *pgm_in);
 Picture *thresholding(Picture *pgm_in, int thresholding_value);
 Picture *paper_salt_noise(Picture *pgm_in, int noise_chance);
 Picture *filter(Picture *pgm_in, Filters *matrix_filter);
-Picture *load(char *nazwa);
+Picture *load(char *nazwa, int *);
 Picture *contrast(Picture *pgm_in, float con_value);
 Picture *zoom(Picture *pgm_in);
 Picture *clear(Picture *pgm_in);
-Picture *LUT(Picture *pgm_in);
+Picture *test();
 
 #endif // !FUNCTIONS_H

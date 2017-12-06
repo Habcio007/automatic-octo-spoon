@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
@@ -8,7 +7,8 @@
 
 int main()
 {
-	int data_input_test=0;
+	data_input_test = 0;
+	photo = NULL;
 		do{
 	menu_main();
 	scanf("%d", &menu_1);
@@ -18,33 +18,65 @@ int main()
 		add();
 		break;
 	case 2:
-		if (photo != NULL){
+		if (data_input_test != 0) {
 		menu_picture_m();
 		}
-		else printf("Brak obrazu");
+		if (data_input_test == 0) {
+			printf("Nie wgrales zdjecia\n");
+			system("pause");
+		}
 		break;
 	case 3:
-		filter_menu();
+		if (data_input_test != 0) {
+			filter_menu_m();
+		}
+		if (data_input_test == 0) {
+			printf("Nie wgrales zdjecia\n");
+			system("pause");
+		}
 		break;
 	case 4:
-		noise_m();
+		if (data_input_test != 0) {
+			noise_m();
+		}
+		if (data_input_test == 0) {
+			printf("Nie wgrales zdjecia\n");
+			system("pause");
+		}
 		break;
 	case 5:
-		histogram_m();
+		if (data_input_test != 0) {
+			histogram_m();
+		}
+		if (data_input_test == 0) {
+			printf("Nie wgrales zdjecia\n");
+			system("pause");
+		}
 		break;
 	case 6:
-		menu_geometry_m();
+		if (data_input_test != 0) {
+			menu_geometry_m();
+		}
+		if (data_input_test == 0) {
+			printf("Nie wgrales zdjecia\n");
+			system("pause");
+		}
 		break;
 	case 7:
-		save_m();
+		if (data_input_test != 0) {
+			save_m();
+		}
+		if (data_input_test == 0) {
+			printf("Nie wgrales zdjecia\n");
+			system("pause");
+		}
 		break;
 	case 8:
-		end(photo);
-		system("pause");
+		end();
 		return 0;
 		break;
 	}
-	} while ((menu_1 = getchar()) != 9);
+	} while ((menu_1 = getchar()) != 8);
 }
 
  

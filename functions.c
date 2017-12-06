@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
@@ -9,27 +8,30 @@
 void add() {
 	char adres[100];
 	if (photo != NULL) {
-
+		memmory.last_photo_number++;
 		if (memmory.last_photo_number >= memmory.max_mem_size) {
 			memmory.max_mem_size = (memmory.last_photo_number) * 2;
-			photo = (Picture**)realloc(photo, (memmory.max_mem_size * sizeof(Picture)));
+			photo = (Picture**)realloc(photo, (memmory.max_mem_size * sizeof(Picture*)));
 		}
-		memmory.last_photo_number++;
+		
 
 	}
-	if (photo == NULL) {
+	else  {
 		memmory.max_mem_size = 1;
 		memmory.last_photo_number = 0;
-		photo = (Picture**)calloc(memmory.max_mem_size, sizeof(Picture));
+		photo = (Picture**)malloc(memmory.max_mem_size * sizeof(Picture*));
 	}
 	printf("Podaj adres\n");
-	//scanf("%99s", adres);
-	photo[memmory.last_photo_number] = load("002.pgm");
-	photo[memmory.last_photo_number] = LUT(photo[memmory.last_photo_number]);
-	photo[memmory.last_photo_number] = histogram(photo[memmory.last_photo_number]);
+	scanf("%99s", adres);
+
+	photo[memmory.last_photo_number] = load(adres,&data_input_test);
+	if (data_input_test == 0) {
+		printf("s");
+		memmory.last_photo_number--;
+	}
 
 }
-//ready
+//rwml
 void end() {
 	int i;
 	int j;
@@ -40,16 +42,12 @@ void end() {
 	for (i = 0; i <= memmory.last_photo_number; i++) {
 		photo[i] = clear(photo[i]);
 	}
-	for (i = 0; i < memmory.max_mem_size; i++) {
+	for (i = 0; i <= memmory.last_photo_number; i++) {
 		free(photo[i]);
-	}
-	if (photo == NULL) {
-		printf("jestes dupa");
-		system("pause");
 	}
 	free(photo);
 }
-//ready
+//rwml
 void save(Picture *pgm_save) {
 	int i, j;
 	FILE *file;
@@ -69,12 +67,33 @@ void save(Picture *pgm_save) {
 	}
 	fclose(file);
 }
-//ready
+//rwml
 void histogram_chart(Picture *pgm) {
-
+	int **tab;
 	FILE *Wsk_do_pliku;
-	int i;
+	int i,j;
 	int n;
+	int k;
+
+	tab = (int**)calloc(2, sizeof(int*));
+	for (i = 0; i <2; i++) {
+		tab[i] = (int*)calloc(pgm->skala, sizeof(int));
+	}
+
+	for (k = 0; k < pgm->skala; k++) {
+
+		for (i = 0; i < pgm->y; i++) {
+			for (j = 0; j < pgm->x; j++) {
+				if (k == pgm->pixel[i][j]) tab[1][k]++;
+
+
+			}
+		}
+		tab[0][k] = k + 1;
+
+	}
+
+	
 	n = pgm->skala;
 	Wsk_do_pliku = fopen("out.html", "w");
 
@@ -90,7 +109,7 @@ void histogram_chart(Picture *pgm) {
 	fprintf(Wsk_do_pliku, "['s', 'sygnal'],\n");
 	//
 	for (i = 0; i < n; i++) {
-		fprintf(Wsk_do_pliku, "[ %d, %d],\n", pgm->histogram[0][i], pgm->histogram[1][i]);   //przekazanie danych na wykres
+		fprintf(Wsk_do_pliku, "[ %d, %d],\n", tab[0][i], tab[1][i]);   //przekazanie danych na wykres
 	}
 
 	//
@@ -100,7 +119,7 @@ void histogram_chart(Picture *pgm) {
 	fprintf(Wsk_do_pliku, "var options = {\n");
 	fprintf(Wsk_do_pliku, "title: 'Histogram'\n");
 	fprintf(Wsk_do_pliku, "};\n");
-	fprintf(Wsk_do_pliku, "var chart = new google.visualization.LineChart(document.getElementById('chart_div'));\n");
+	fprintf(Wsk_do_pliku, "var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));\n");
 	fprintf(Wsk_do_pliku, "chart.draw(data, {\n");
 	fprintf(Wsk_do_pliku, "colors: ['red']\n");
 	fprintf(Wsk_do_pliku, "}\n");
@@ -115,8 +134,12 @@ void histogram_chart(Picture *pgm) {
 	fprintf(Wsk_do_pliku, "</html>\n");
 
 	fclose(Wsk_do_pliku);
+	for (i = 0; i<2; i++) {
+		free(tab[i]);
+	}
+	free(tab);
 }
-//ready
+//rwml
 int median(int a, int b, int c, int d){
 
 	int i;
@@ -131,7 +154,7 @@ int median(int a, int b, int c, int d){
 	free(temp);
 	return i;
 }
-//ready
+//rwml
 void swap(int*x, int*y)
 {
 	int temp;
@@ -140,7 +163,7 @@ void swap(int*x, int*y)
 	*y = temp;
 
 }
-//ready
+//rwml
 void increas_sort(int *tab)
 {
 	int i, n, j, temp;
@@ -157,43 +180,75 @@ void increas_sort(int *tab)
 		}
 	}
 }
-//ready
+//rwml
 Picture *scale(Picture *pgm_in, int scal) {
 	int i, j;
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-	pgm_out->skala = pgm_in->skala;
-
-	pgm_out->x = pgm_in->x / scal - scal;
-	pgm_out->y = pgm_in->y / scal - scal;
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
+	int **temp;
+	int x, y;
+	y = pgm_in->y / scal - 1;
+	x = pgm_in->x / scal - 1;
+	temp = (int**)calloc(y, sizeof(int*));
+	for (i = 0; i < y; i++) {
+		temp[i] = (int*)calloc(x, sizeof(int));;
 	}
+
+
 	int k = 0;
 	int m = 0;
-	for (i = 0; i<pgm_out->y; i++) {
+	for (i = 0; i<y; i++) {
 		k = k + scal;
-		for (j = 0; j<pgm_out->x; j++) {
-			pgm_out->pixel[i][j] = pgm_in->pixel[k][m];
+		for (j = 0; j<x; j++) {
+			temp[i][j] = pgm_in->pixel[k][m];
 			m = m + scal;
 		}
 		m = 0;
 	}
-	return pgm_out;
+
+	for (i = 0; i<pgm_in->y; i++) {
+		free(pgm_in->pixel[i]);
+	}
+	free(pgm_in->pixel);
+	pgm_in->pixel = (int**)malloc(y * sizeof(int*));
+	for (i = 0; i < y; i++) {
+		pgm_in->pixel[i] = (int*)malloc(x * sizeof(int));
+	}
+	pgm_in->x = x;
+	pgm_in->y = y;
+
+
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			pgm_in->pixel[i][j] = temp[i][j];
+		}
+	}
+	for (i = 0; i<y; i++) {
+		free(temp[i]);
+	}
+	free(temp);
+	return pgm_in;
 }
-//ready
+//rwml
 Picture *negativ(Picture *pgm_in) {
 	int i, j;
 
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			pgm_in->pixel[i][j] = pgm_in->skala - pgm_in->pixel[i][j];
+		}
+	}
+	return pgm_in;
+
+}
+//rwml
+Picture *test() {
+	int i, j;
+
 	Picture *pgm_out;
 	pgm_out = (Picture*)malloc(sizeof(Picture));
 
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
+	pgm_out->skala = 100;
+	pgm_out->x = 100;
+	pgm_out->y = 100;
 	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
 	for (i = 0; i < pgm_out->y; i++) {
 		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
@@ -201,275 +256,200 @@ Picture *negativ(Picture *pgm_in) {
 
 	for (i = 0; i<pgm_out->y; i++) {
 		for (j = 0; j<pgm_out->x; j++) {
-			pgm_out->pixel[i][j] = pgm_in->skala - pgm_in->pixel[i][j];
+			pgm_out->pixel[i][j] = i + j;
 		}
 	}
 	return pgm_out;
 
 }
-//ready
+//rwml
 Picture *brightness(Picture *pgm_in, int bright_value) {
 	int i, j;
 
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
-	}
-	for (i = 0; i<pgm_out->y; i++) {
-		for (j = 0; j<pgm_out->x; j++) {
-			pgm_out->pixel[i][j] = pgm_in->pixel[i][j] + bright_value;
-			if (pgm_out->pixel[i][j] > pgm_out->skala) pgm_out->pixel[i][j] = pgm_out->skala;
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			pgm_in->pixel[i][j] = pgm_in->pixel[i][j] + bright_value;
+			if (pgm_in->pixel[i][j] > pgm_in->skala) pgm_in->pixel[i][j] = pgm_in->skala;
+			if (pgm_in->pixel[i][j] < 0) pgm_in->pixel[i][j] = 0;
 		}
 	}
-	return pgm_out;
+	return pgm_in;
 
 }
-//ready
+//rwml
 Picture *miror_y(Picture *pgm_in) {
 	int i, j;
-
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
+	int **temp;
+	temp = (int**)calloc(pgm_in->y, sizeof(int*));
+	for (i = 0; i < pgm_in->y; i++) {
+		temp[i] = (int*)calloc(pgm_in->x, sizeof(int));;
 	}
 
-	for (i = 0; i<pgm_out->y; i++) {
-		for (j = 0; j<pgm_out->x; j++) {
-			pgm_out->pixel[i][j] = pgm_in->pixel[i][pgm_out->x - 1 - j];
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			temp[i][j] = pgm_in->pixel[i][pgm_in->x - 1 - j];
 		}
 	}
-	return pgm_out;
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			pgm_in->pixel[i][j] = temp[i][j];
+		}
+	}
+	for (i = 0; i < pgm_in->y; i++) {
+		free(temp[i]);
+	}
+	free(temp);
+	return pgm_in;
 
 }
-//ready
+//rwml
 Picture *miror_x(Picture *pgm_in) {
 	int i, j;
 
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
+	int **temp;
+	temp = (int**)calloc(pgm_in->y, sizeof(int*));
+	for (i = 0; i < pgm_in->y; i++) {
 
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
+		temp[i] = (int*)calloc(pgm_in->x, sizeof(int));;
 	}
-
-	for (i = 0; i<pgm_out->y; i++) {
-		for (j = 0; j<pgm_out->x; j++) {
-			pgm_out->pixel[i][j] = pgm_in->pixel[pgm_out->y - 1 - i][j];
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			temp[i][j] = pgm_in->pixel[pgm_in->y - 1 - i][j];
 		}
 	}
-	return pgm_out;
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			pgm_in->pixel[i][j] = temp[i][j];
+		}
+	}
+	for (i = 0; i < pgm_in->y; i++) {
+		free(temp[i]);
+	}
+	free(temp);
+	return pgm_in;
 
 }
-//ready
+//rwml
 Picture *rotate(Picture *pgm_in) {
 	int i, j;
 
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
+	int **temp;
+	int x, y;
+	x = pgm_in->y;
+	y = pgm_in->x;
 
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->y;
-	pgm_out->y = pgm_in->x;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
+	temp = (int**)calloc(y, sizeof(int*));
+	for (i = 0; i < y; i++) {
+		temp[i] = (int*)calloc(x, sizeof(int));;
 	}
 
 
 	for (i = 0; i<pgm_in->y; i++) {
 		for (j = 0; j<pgm_in->x; j++) {
-			pgm_out->pixel[j][i] = pgm_in->pixel[i][j];
+			temp[j][i] = pgm_in->pixel[i][j];
 		}
 	}
+	for (i = 0; i<pgm_in->y; i++) {
+		free(pgm_in->pixel[i]);
+	}
+	free(pgm_in->pixel);
+	pgm_in->pixel = (int**)malloc(y * sizeof(int*));
+	for (i = 0; i < y; i++) {
+		pgm_in->pixel[i] = (int*)malloc(x * sizeof(int));
+	}
+	pgm_in->x = x;
+	pgm_in->y = y;
 
-	return pgm_out;
+
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			pgm_in->pixel[i][j] = temp[i][j];
+		}
+	}
+	for (i = 0; i<y; i++) {
+		free(temp[i]);
+	}
+	free(temp);
+	return pgm_in;
 }
-//ready
+//rwml
 Picture *rotate_180(Picture *pgm_in) {
 	int i, j;
-
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
+	int **temp;
+	int x, y;
+	y = pgm_in->y;
+	x = pgm_in->x;
+	temp = (int**)calloc(y, sizeof(int*));
+	for (i = 0; i < y; i++) {
+		temp[i] = (int*)calloc(x, sizeof(int));;
 	}
-	int m = pgm_in->y-1;
-	int n = pgm_in->x-1;
-
+	int m = pgm_in->y - 1;
+	int n = pgm_in->x - 1;
 	for (i = 0; i<pgm_in->y; i++) {
 		for (j = 0; j<pgm_in->x; j++) {
-			pgm_out->pixel[i][j] = pgm_in->pixel[m-i][n-j];
+			temp[i][j] = pgm_in->pixel[m - i][n - j];
 		}
 	}
-
-	return pgm_out;
-}
-//ready
-Picture *histogram(Picture *pgm_in) {
-	int i, j, k;
-
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
-	}
-
-	pgm_out->pixel = pgm_in->pixel;
-
-	pgm_out->histogram = (int**)calloc(2, sizeof(int*));
-	for (i = 0; i <2; i++) {
-		pgm_out->histogram[i] = (int*)calloc(pgm_out->skala, sizeof(int));
-	}
-
-	for (k = 0; k < pgm_out->skala; k++) {
-
-		for (i = 0; i < pgm_out->y; i++) {
-			for (j = 0; j < pgm_out->x; j++) {
-				if (k == pgm_out->pixel[i][j]) pgm_out->histogram[1][k]++;
-
-
-			}
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			pgm_in->pixel[i][j] = temp[i][j];
 		}
-		pgm_out->histogram[0][k] = k + 1;
-
 	}
-	/*
-	for (j = 0; j <pgm_out->skala; j++) {
-	printf("%d:%d\n", pgm_out->histogram[0][j], pgm_out->histogram[1][j]);
-
-
-	}*/
-	return pgm_out;
+	for (i = 0; i<y; i++) {
+		free(temp[i]);
+	}
+	free(temp);
+	return pgm_in;
 }
-//ready
+//rwml
 Picture *thresholding(Picture *pgm_in, int thresholding_value)
 {
 	int i, j;
-
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
-	}
-
-	for (i = 0; i<pgm_out->y; i++) {
-		for (j = 0; j<pgm_out->x; j++) {
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
 			if (pgm_in->pixel[i][j] > thresholding_value) {
-				pgm_out->pixel[i][j] = 1;
+				pgm_in->pixel[i][j] = 1;
 			}
-			if (pgm_in->pixel[i][j] <= thresholding_value) {
-				pgm_out->pixel[i][j] = 0;
+			else {
+				pgm_in->pixel[i][j] = 0;
 			}
 		}
 	}
-	pgm_out->skala = 1;
-	return pgm_out;
+	pgm_in->skala = 1;
+	return pgm_in;
 }
-//ready
+//rwml
 Picture *paper_salt_noise(Picture *pgm_in, int noise_chance) {
-
 	srand(time(NULL));
 	int i, j, noise_number;
-
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
-	}
-
-	noise_number = pgm_out->x*pgm_out->y*noise_chance / 100;
-
-	for (i = 0; i<pgm_out->y; i++) {
-		for (j = 0; j<pgm_out->x; j++) {
-			pgm_out->pixel[i][j] = pgm_in->pixel[i][j];
-		}
-	}
-
+	noise_number = pgm_in->x*pgm_in->y*noise_chance / 100;
 	for (i = 0; i < noise_number; i++) {
 		if (rand() % 2 == 0)
-			pgm_out->pixel[rand() % pgm_out->y][rand() % pgm_out->x] = 0;
+			pgm_in->pixel[rand() % pgm_in->y][rand() % pgm_in->x] = 0;
 		else
 		{
-			pgm_out->pixel[rand() % pgm_out->y][rand() % pgm_out->x] = pgm_out->skala;
+			pgm_in->pixel[rand() % pgm_in->y][rand() % pgm_in->x] = pgm_in->skala;
 		}
-
 	}
-
-	return pgm_out;
-
-
-
+	return pgm_in;
 }
-//ready
+//rwml
 Picture *filter(Picture *pgm_in, Filters *matrix_filter) {
 	int i, j, k, l,m=0,n=0, a, average;
-	Picture *pgm_out;
-
-	
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-
-
-
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
+	int **temp;
+	int x, y;
+	y = pgm_in->y;
+	x = pgm_in->x;
+	temp = (int**)calloc(y, sizeof(int*));
+	for (i = 0; i < y; i++) {
+		temp[i] = (int*)calloc(x, sizeof(int));;
 	}
+
 	a = (matrix_filter->size - 1) / 2;
-	pgm_out->pixel = pgm_in->pixel;
 
 
-
-	for (i = a; i<pgm_out->y - a; i++) {
-		for (j = a; j<pgm_out->x - a; j++) {
+	for (i = a; i<pgm_in->y - a; i++) {
+		for (j = a; j<pgm_in->x - a; j++) {
 			average = 0;
 			m = 0;
 			for (k = -a; k <= a; k++) {
@@ -480,14 +460,22 @@ Picture *filter(Picture *pgm_in, Filters *matrix_filter) {
 				}
 				m++;
 			}
-			pgm_out->pixel[i][j] = average / matrix_filter->average;
+			temp[i][j] = average / matrix_filter->average;
 		}
 	}
-
-	return pgm_out;
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j<pgm_in->x; j++) {
+			pgm_in->pixel[i][j] = temp[i][j];
+		}
+	}
+	for (i = 0; i<y; i++) {
+		free(temp[i]);
+	}
+	free(temp);
+	return pgm_in;
 }
-//ready
-Picture *load(char *nazwa) {
+//rwml
+Picture *load(char *nazwa, int *data_test) {
 
 	int i, j;
 	Picture *pgm_out;
@@ -499,6 +487,7 @@ Picture *load(char *nazwa) {
 	if (file == NULL) {								// zbedne
 		perror("Nie udalo sie otworzyc pliku ");
 		system("pause");
+		*data_test = 0;
 		return ;
 	}
 	
@@ -520,135 +509,183 @@ Picture *load(char *nazwa) {
 	}
 	fclose(file); 
 	puts("Pomyslnie otwarto plik");
-	system("pause");
+	*data_test = 1;
 	return pgm_out;
 }
-//ready
+//rwml
 Picture *contrast(Picture *pgm_in, float con_value) {
 	int i, j, k;
+	int *temp;
+	temp = (int*)calloc(pgm_in->skala + 1, sizeof(int));
 
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
-
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
-
-	pgm_out->LUT = (int*)calloc(pgm_out->skala+1, sizeof(int));
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
+	for (i = 1; i <= pgm_in->skala; i++) {
+		temp[i] = con_value*(i - pgm_in->skala / 2) + pgm_in->skala / 2;
+		if (temp[i] < 0)temp[i] = 0;
+		if (temp[i] > pgm_in->skala)temp[i] = pgm_in->skala;
 	}
 
-	for (i = 1; i <= pgm_out->skala; i++) {
-		pgm_out->LUT[i] = con_value*(i - pgm_out->skala / 2) +  pgm_out->skala / 2;
-		if (pgm_out->LUT[i] < 0)pgm_out->LUT[i] = 0;
-		if (pgm_out->LUT[i] > pgm_out->skala)pgm_out->LUT[i] = pgm_out->skala;
-	}
-
-	for (i = 0; i<pgm_out->y; i++) {
-		for (j = 0; j < pgm_out->x; j++) {
-			for (k = 1; k <= pgm_out->skala; k++){
+	for (i = 0; i<pgm_in->y; i++) {
+		for (j = 0; j < pgm_in->x; j++) {
+			for (k = 1; k <= pgm_in->skala; k++) {
 				if (pgm_in->pixel[i][j] == k)
-					pgm_out->pixel[i][j] = pgm_out->LUT[k];
+					pgm_in->pixel[i][j] = temp[k];
 			}
 		}
 	}
-	return pgm_out; 
+	free(temp);
+	return pgm_in;
 }
-//ready
+//rwml
 Picture *zoom(Picture *pgm_in) {
+
 	int i, j;
 
-	Picture *pgm_out;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
+	int **temp;
 
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x * 2;
-	pgm_out->y = pgm_in->y * 2;
+	int x, y;
 
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
+	y = pgm_in->y * 2;
+
+	x = pgm_in->x * 2;
+
+	temp = (int**)malloc(y * sizeof(int*));
+
+	for (i = 0; i < y; i++) {
+
+		temp[i] = (int*)malloc(x * sizeof(int));;
+
 	}
+
 	int a = 0, b = 0;
-	for (i = 0; i < pgm_out->y; i++) {
-		for (j = 0; j < pgm_out->x; j++) {
+
+	for (i = 0; i < y; i++) {
+
+		for (j = 0; j < x; j++) {
+
 			if ((i % 2 == 0) && (j % 2 == 0)) {
-				pgm_out->pixel[i][j] = pgm_in->pixel[a][b];
+
+				temp[i][j] = pgm_in->pixel[a][b];
+
 				b++;
+
 			}
-			if ((i % 2 == 0) && (j % 2 != 0)) pgm_out->pixel[i][j] = -1;
-			if ((i % 2 != 0) && (j % 2 == 0)) pgm_out->pixel[i][j] = -2;
-			if ((i % 2 != 0) && (j % 2 != 0)) pgm_out->pixel[i][j] = -3;
+
+			if ((i % 2 == 0) && (j % 2 != 0)) 	temp[i][j] = -1;
+
+			if ((i % 2 != 0) && (j % 2 == 0)) 	temp[i][j] = -2;
+
+			if ((i % 2 != 0) && (j % 2 != 0)) 	temp[i][j] = -3;
+
 		}
-		
+
+
+
 		if (i % 2 == 0)		a++;
+
 		b = 0;
+
 	}
-	
-	
-	for (i = 1; i < pgm_out->y - 1; i++) {
-		for (j = 1; j <pgm_out->x - 1; j++) {
-			if (pgm_out->pixel[i][j] == -3) {
-				pgm_out->pixel[i][j] = median(pgm_out->pixel[i - 1][j - 1], pgm_out->pixel[i - 1][j + 1], pgm_out->pixel[i + 1][j - 1], pgm_out->pixel[i + 1][j + 1]);
+	for (i = 1; i <y - 1; i++) {
+
+		for (j = 1; j < x - 1; j++) {
+
+			if (temp[i][j] == -3) {
+
+				temp[i][j] = median(temp[i - 1][j - 1], temp[i - 1][j + 1], temp[i + 1][j - 1], temp[i + 1][j + 1]);
+
 			}
+
 		}
+
 	}
-	for (i = 1; i < pgm_out->y - 1; i++) {
-		for (j = 1; j <pgm_out->x - 1; j++) {
-			if (pgm_out->pixel[i][j] == -2) {
-				a = 0.5*(pgm_out->pixel[i - 1][j]);
-				b = 0.5*(pgm_out->pixel[i + 1][j]);
-				pgm_out->pixel[i][j] = median(a, pgm_out->pixel[i][j - 1], b, pgm_out->pixel[i][j + 1]);
+
+	for (i = 1; i <y - 1; i++) {
+
+		for (j = 1; j <x - 1; j++) {
+
+			if (temp[i][j] == -2) {
+
+				a = 0.5*(temp[i - 1][j]);
+
+				b = 0.5*(temp[i + 1][j]);
+
+				temp[i][j] = median(a, temp[i][j - 1], b, temp[i][j + 1]);
+
 			}
+
 		}
+
 	}
-	for (i = 1; i < pgm_out->y - 1; i++) {
-		for (j = 1; j <pgm_out->x - 1; j++) {
-			if (pgm_out->pixel[i][j] == -1) {
-				pgm_out->pixel[i][j] = median(pgm_out->pixel[i - 1][j], 0.5*pgm_out->pixel[i][j + 1], pgm_out->pixel[i + 1][j], 0.5*pgm_out->pixel[i][j + 1]);
+
+	for (i = 1; i <y - 1; i++) {
+
+		for (j = 1; j <x - 1; j++) {
+
+			if (temp[i][j] == -1) {
+
+				temp[i][j] = median(temp[i - 1][j], 0.5*temp[i][j + 1], temp[i + 1][j], 0.5*temp[i][j + 1]);
+
 			}
+
 		}
+
 	}
+
+	for (i = 0; i<pgm_in->y; i++) {
+
+		free(pgm_in->pixel[i]);
+
+	}
+
+	free(pgm_in->pixel);
+
+	pgm_in->pixel = (int**)malloc(y * sizeof(int*));
+
+	for (i = 0; i < y; i++) {
+
+		pgm_in->pixel[i] = (int*)malloc(x * sizeof(int));
+
+	}
+
+	pgm_in->x = x;
+
+	pgm_in->y = y;
+
+
+
+
+
+	for (i = 0; i<pgm_in->y; i++) {
+
+		for (j = 0; j<pgm_in->x; j++) {
+
+			pgm_in->pixel[i][j] = temp[i][j];
+
+		}
+
+	}
+
+	for (i = 0; i<y; i++) {
+
+		free(temp[i]);
+
+	}
+
+	free(temp);
+
+	return pgm_in;
 
 }
-//ready
+//rwml
 Picture *clear(Picture *pgm_in) {
 	int i, j;
+
 	for (i = 0; i<pgm_in->y; i++) {
 		free(pgm_in->pixel[i]);
 	}
 	free(pgm_in->pixel);
-	for (i = 0; i<2; i++) {
-		free(pgm_in->histogram[i]);
-	}
-	
-	free(pgm_in->histogram);
-	if (pgm_in->LUT != NULL){
-	free(pgm_in->LUT);
-	}
 	return pgm_in;
 }
-//ready
-Picture *LUT(Picture *pgm_in) {
-	Picture *pgm_out;
-	int i;
-	pgm_out = (Picture*)malloc(sizeof(Picture));
+//rwml
 
-	pgm_out->skala = pgm_in->skala;
-	pgm_out->x = pgm_in->x;
-	pgm_out->y = pgm_in->y;
 
-	pgm_out->LUT = (int*)calloc(pgm_out->skala + 1, sizeof(int));
-	pgm_out->pixel = (int**)calloc(pgm_out->y, sizeof(int*));
-	for (i = 0; i < pgm_out->y; i++) {
-		pgm_out->pixel[i] = (int*)calloc(pgm_out->x, sizeof(int));;
-	}
-	pgm_out->pixel = pgm_in->pixel;
-	for (i = 0; i <= pgm_out->skala; i++) {
-		pgm_out->LUT[i] = i;
-	}
-	return pgm_out;
-}
-//ready
