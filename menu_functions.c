@@ -8,7 +8,6 @@
 
 void save_m() {
 	save(photo[memmory.last_photo_number]);
-	system("out.pgm");
 }
 void low_pass_filter_menu()
 {
@@ -99,12 +98,7 @@ void menu_picture_m() {
 		break;
 	case 2:
 		printf("Podaj wartosc zmiany kontrastu: \n");
-		do{
 			scanf("%f", &cont_value);
-			if ( cont_value < 0) {
-			printf("Zmiana kontrastu nie moze byc mnniejsze od 0, wprowadz jeszcze raz: ");
-			}
-		} while ((cont_value = getchar()) < 0);
 		photo[memmory.last_photo_number] = contrast(photo[memmory.last_photo_number], cont_value);
 		break;
 	case 3:
@@ -253,10 +247,10 @@ void noise_m()
 	printf("Podaj procent zapelnienia szumem [0;100]");
 	do {
 		scanf("%d", &noise_chance);
-		if ((noise_chance < 0) || (noise_chance > 4)) {
+		if ((noise_chance < 0) || (noise_chance >100)) {
 			printf("Zla wartosc, wprowadz jeszcze raz: ");
 		}
-	} while ((noise_chance < 0) || (noise_chance > 4));
+	} while ((noise_chance < 0) || (noise_chance > 100));
 
 	photo[memmory.last_photo_number]=paper_salt_noise(photo[memmory.last_photo_number], noise_chance);
 
