@@ -1,5 +1,4 @@
-# automatic-octo-spoon
-Simple photo editor
+#Simple photo editor
 -------------------
 Author:Hubert Grzenia (grzenia.hubert@gmail.com)
 
