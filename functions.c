@@ -537,144 +537,78 @@ Picture *contrast(Picture *pgm_in, float con_value) {
 }
 //rwml
 Picture *zoom(Picture *pgm_in) {
-
 	int i, j;
-
 	int **temp;
-
 	int x, y;
-
 	y = pgm_in->y * 2;
-
 	x = pgm_in->x * 2;
-
 	temp = (int**)malloc(y * sizeof(int*));
-
 	for (i = 0; i < y; i++) {
-
 		temp[i] = (int*)malloc(x * sizeof(int));;
-
 	}
-
 	int a = 0, b = 0;
-
 	for (i = 0; i < y; i++) {
-
 		for (j = 0; j < x; j++) {
-
 			if ((i % 2 == 0) && (j % 2 == 0)) {
-
 				temp[i][j] = pgm_in->pixel[a][b];
-
 				b++;
-
 			}
-
 			if ((i % 2 == 0) && (j % 2 != 0)) 	temp[i][j] = -1;
-
 			if ((i % 2 != 0) && (j % 2 == 0)) 	temp[i][j] = -2;
-
 			if ((i % 2 != 0) && (j % 2 != 0)) 	temp[i][j] = -3;
-
 		}
-
-
-
 		if (i % 2 == 0)		a++;
-
 		b = 0;
-
 	}
 	for (i = 1; i <y - 1; i++) {
-
 		for (j = 1; j < x - 1; j++) {
-
 			if (temp[i][j] == -3) {
-
 				temp[i][j] = median(temp[i - 1][j - 1], temp[i - 1][j + 1], temp[i + 1][j - 1], temp[i + 1][j + 1]);
-
 			}
-
 		}
-
 	}
-
 	for (i = 1; i <y - 1; i++) {
-
 		for (j = 1; j <x - 1; j++) {
-
 			if (temp[i][j] == -2) {
-
 				a = 0.5*(temp[i - 1][j]);
-
 				b = 0.5*(temp[i + 1][j]);
-
 				temp[i][j] = median(a, temp[i][j - 1], b, temp[i][j + 1]);
-
 			}
-
 		}
-
 	}
 
 	for (i = 1; i <y - 1; i++) {
-
 		for (j = 1; j <x - 1; j++) {
-
 			if (temp[i][j] == -1) {
-
 				temp[i][j] = median(temp[i - 1][j], 0.5*temp[i][j + 1], temp[i + 1][j], 0.5*temp[i][j + 1]);
-
 			}
-
 		}
-
 	}
 
 	for (i = 0; i<pgm_in->y; i++) {
-
 		free(pgm_in->pixel[i]);
-
 	}
-
 	free(pgm_in->pixel);
-
+	y = y - 2;
+	x = x - 2;
 	pgm_in->pixel = (int**)malloc(y * sizeof(int*));
-
 	for (i = 0; i < y; i++) {
-
 		pgm_in->pixel[i] = (int*)malloc(x * sizeof(int));
-
 	}
 
 	pgm_in->x = x;
-
 	pgm_in->y = y;
 
-
-
-
-
 	for (i = 0; i<pgm_in->y; i++) {
-
 		for (j = 0; j<pgm_in->x; j++) {
-
-			pgm_in->pixel[i][j] = temp[i][j];
-
+			pgm_in->pixel[i][j] = temp[i+1][j+1];
 		}
-
 	}
-
 	for (i = 0; i<y; i++) {
-
 		free(temp[i]);
-
 	}
-
 	free(temp);
-
 	return pgm_in;
-
 }
 //rwml
 Picture *clear(Picture *pgm_in) {
