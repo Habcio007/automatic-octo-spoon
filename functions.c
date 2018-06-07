@@ -5,7 +5,7 @@
 #include"structs.h"
 #include"functions.h"
 
-void add() {
+void add() { 
 	char adres[100];
 	if (photo != NULL) {
 		memmory.last_photo_number++;
@@ -31,7 +31,7 @@ void add() {
 	}
 
 }
-//rwml
+//rwml zwieszkanie pamieci, po dodaniu zdjecia dodajesz pamiec
 void end() {
 	int i;
 	int j;
@@ -47,7 +47,7 @@ void end() {
 	}
 	free(photo);
 }
-//rwml
+//rwml zwykly zapis
 void save(Picture *pgm_save) {
 	int i, j;
 	FILE *file;
@@ -67,7 +67,7 @@ void save(Picture *pgm_save) {
 	}
 	fclose(file);
 }
-//rwml
+//rwml histogram to po prostu wykres ile z zakresu skali szarości ilosci danych pikseli
 void histogram_chart(Picture *pgm) {
 	int **tab;
 	FILE *Wsk_do_pliku;
@@ -80,7 +80,7 @@ void histogram_chart(Picture *pgm) {
 		tab[i] = (int*)calloc(pgm->skala, sizeof(int));
 	}
 
-	for (k = 0; k < pgm->skala; k++) {
+	for (k = 0; k < pgm->skala; k++) {//zliczanie ilosci danego koloru
 
 		for (i = 0; i < pgm->y; i++) {
 			for (j = 0; j < pgm->x; j++) {
@@ -139,7 +139,7 @@ void histogram_chart(Picture *pgm) {
 	}
 	free(tab);
 }
-//rwml
+//rwml mediana zwykla
 int median(int a, int b, int c, int d){
 
 	int i;
@@ -180,7 +180,7 @@ void increas_sort(int *tab)
 		}
 	}
 }
-//rwml
+//rwml skalowanie, czyli np usuwasz co drugi element
 Picture *scale(Picture *pgm_in, int scal) {
 	int i, j;
 	int **temp;
@@ -227,7 +227,7 @@ Picture *scale(Picture *pgm_in, int scal) {
 	free(temp);
 	return pgm_in;
 }
-//rwml
+//rwml wartosc  z róznicy (skala-pixel)
 Picture *negativ(Picture *pgm_in) {
 	int i, j;
 
@@ -262,7 +262,7 @@ Picture *test() {
 	return pgm_out;
 
 }
-//rwml
+//rwml dodajesz wartosc do pixela
 Picture *brightness(Picture *pgm_in, int bright_value) {
 	int i, j;
 
@@ -276,7 +276,7 @@ Picture *brightness(Picture *pgm_in, int bright_value) {
 	return pgm_in;
 
 }
-//rwml
+//rwml zamieniasz kolejnosc
 Picture *miror_y(Picture *pgm_in) {
 	int i, j;
 	int **temp;
@@ -302,7 +302,7 @@ Picture *miror_y(Picture *pgm_in) {
 	return pgm_in;
 
 }
-//rwml
+//rwml zamiana kolejnosci
 Picture *miror_x(Picture *pgm_in) {
 	int i, j;
 
@@ -329,7 +329,7 @@ Picture *miror_x(Picture *pgm_in) {
 	return pgm_in;
 
 }
-//rwml
+//rwml rotacja macierzowa
 Picture *rotate(Picture *pgm_in) {
 	int i, j;
 
@@ -372,7 +372,7 @@ Picture *rotate(Picture *pgm_in) {
 	free(temp);
 	return pgm_in;
 }
-//rwml
+//rwml to samo co wyzej
 Picture *rotate_180(Picture *pgm_in) {
 	int i, j;
 	int **temp;
@@ -401,7 +401,7 @@ Picture *rotate_180(Picture *pgm_in) {
 	free(temp);
 	return pgm_in;
 }
-//rwml
+//rwml od danego x pixele ponizej sa czarne a powyzej biale
 Picture *thresholding(Picture *pgm_in, int thresholding_value)
 {
 	int i, j;
@@ -418,7 +418,7 @@ Picture *thresholding(Picture *pgm_in, int thresholding_value)
 	pgm_in->skala = 1;
 	return pgm_in;
 }
-//rwml
+//rwml losowanie i w losowych miesjcach dodaje albo biael albo czarne
 Picture *paper_salt_noise(Picture *pgm_in, int noise_chance) {
 	srand(time(NULL));
 	int i, j, noise_number;
@@ -433,7 +433,7 @@ Picture *paper_salt_noise(Picture *pgm_in, int noise_chance) {
 	}
 	return pgm_in;
 }
-//rwml
+//rwml filtry, wczytywana jest maska , nie pamietam co tam sie dzieje ogolnie macierze
 Picture *filter(Picture *pgm_in, Filters *matrix_filter) {
 	int i, j, k, l,m=0,n=0, a, average;
 	int **temp;
@@ -474,7 +474,7 @@ Picture *filter(Picture *pgm_in, Filters *matrix_filter) {
 	free(temp);
 	return pgm_in;
 }
-//rwml
+//rwml wczytywanie zdjecia
 Picture *load(char *nazwa, int *data_test) {
 
 	int i, j;
@@ -512,7 +512,7 @@ Picture *load(char *nazwa, int *data_test) {
 	*data_test = 1;
 	return pgm_out;
 }
-//rwml
+//rwml zwiekszenie kontrastu, nie pamietam oalgosa
 Picture *contrast(Picture *pgm_in, float con_value) {
 	int i, j, k;
 	int *temp;
@@ -535,7 +535,7 @@ Picture *contrast(Picture *pgm_in, float con_value) {
 	free(temp);
 	return pgm_in;
 }
-//rwml
+//rwml powieszkasz x2 a potem wypełniasz luki powstale mediana z kilku pkt
 Picture *zoom(Picture *pgm_in) {
 	int i, j;
 	int **temp;
